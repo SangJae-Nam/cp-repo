@@ -1,9 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
-#include <functional>
 #include <vector>
-#include <array>
 #include <string>
 #include <tuple>
 #include <sstream>
@@ -17,6 +15,7 @@
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
+#include <cstring>
 
 using namespace std;
 
@@ -234,12 +233,12 @@ public:
 };
 
 struct S {
-	long long int a;
+	int a;
 	int size;
 };
 
 struct F {
-	long long a;
+	int a;
 };
 
 S op(S l, S r)
@@ -249,7 +248,7 @@ S op(S l, S r)
 
 S e()
 {
-	return S{0, 0};
+	return S{0, 1};
 }
 
 S mapping(F l, S r)
@@ -267,38 +266,79 @@ F id()
 	return F{0};
 }
 
+class Solve
+{
+private:
+	int N, M;
+	vector<vector<int>> adj;
+	vector<int> ett;
+	vector<pair<int, int>> ettIndex;
+
+	void dfs(int cur)
+	{
+		ett.push_back(cur);
+		ettIndex[cur].first = ett.size() - 1;
+
+		for (int next : adj[cur]) {
+			dfs(next);
+		}
+
+		ett.push_back(cur);
+		ettIndex[cur].second = ett.size() - 1;
+	}
+
+public:
+	Solve() {}
+	void input() {
+		cin >> N >> M;
+		adj.resize(N + 1);
+		ett.reserve(2 * (N + 1));
+		ettIndex.resize(N + 1);
+
+		for (int i = 1; i <= N; i++) {
+			int p;
+			cin >> p;
+
+			if (p != -1) {
+				adj[p].push_back(i);
+			}
+		}
+	}
+
+	void solve() {
+		dfs(1);
+		LazySegtree<S, op, e, F, mapping, composition, id> seg(ett.size());
+
+		for (int q = 0; q < M; q++) {
+			int s;
+			cin >> s;
+
+			if (s == 1) {
+				int idx, w;
+				cin >> idx >> w;
+
+				seg.apply(ettIndex[idx].first, F{w});
+			}
+			else if (s == 2) {
+				int idx;
+				cin >> idx;
+				cout << seg.query(ettIndex[idx].first, ettIndex[idx].second).a << '\n';
+			}
+		}
+	}
+};
+
+
+
 int main(int argc, char *argv[])
 {
-	int N, M, K;
-	cin >> N >> M >> K;
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
 
-	vector<S> A(N);
-	for (int i = 0; i < N; i++) {
-		long long int x;
-		cin >> x;
-		A[i] = S{x, 1};
-	}
-
-	LazySegtree<S, op, e, F, mapping, composition, id> seg(A);
-
-	for (int i = 0; i < (M + K); i++) {
-		int k;
-		cin >> k;
-		if (k == 1) {
-			int l, r;
-			long long int b;
-			cin >> l >> r >> b;
-			l--; r--;
-			seg.apply(l, r + 1, F{b});
-		}
-		else {
-			int l, r;
-			cin >> l >> r;
-			l--; r--;
-			cout << seg.query(l, r + 1).a << '\n';
-		}
-	}
+	Solve s;
+	s.input();
+	s.solve();
 
 	return 0;
 }
-
