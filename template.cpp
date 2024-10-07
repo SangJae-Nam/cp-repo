@@ -1695,6 +1695,18 @@ void Eratos(int n, vector<unsigned char> &isPrime)
     }
 }
 
+class Solve {
+private:
+public:
+	Solve () {}
+
+	void input() {
+	}
+
+	void solve() {
+	}
+};
+
 int main(int argc, char *argv[])
 {
 	ios_base::sync_with_stdio(false);
