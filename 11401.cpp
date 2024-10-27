@@ -160,31 +160,27 @@ public:
 template<int m, typename T6>
 modint<m, T6> ncr(int n, int r)
 {
-	assert(r < m);
+    assert(r < m);
 
-	if (n - r > r) {
-		r = n - r;
-	}
+    if (n - r < r) {
+        r = n - r;
+    }
 
-	modint<m, T6> factNmR = 1;
-	for (int i = 1; i <= n - r; i++) {
-		factNmR *= i;
-	}
-	modint<m, T6> invFactNmR = factNmR.pow(m - 2);
+    // N * (N - 1) * ... * (N - R + 1)
+    modint<m, T6> n2nr = 1;
+    // R!
+    modint<m, T6> factR = 1;
+    for (int i = 0; i < r; i++) {
+        n2nr *= (n - i);
+        factR *= (i + 1);
+    }
 
-	modint<m, T6> factR = factNmR;
-	for (int i = n - r + 1; i <= r; i++) {
-		factR *= i;
-	}
-	modint<m, T6> invFactR = factR.pow(m - 2);
-	
-	modint<m, T6> factN = factR;
-	for (int i = r + 1; i <= n; i++) {
-		factN *= i;
-	}
+    // (R!)^-1 == (R!)^(m - 2)
+    modint<m, T6> invFactR = factR.pow(m - 2);
 
-	return factN * (invFactR * invFactNmR);
+    return n2nr * invFactR;
 }
+
 
 int main(int argc, char *argv[])
 {
