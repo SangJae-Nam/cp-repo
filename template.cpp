@@ -586,7 +586,33 @@ modint<m, T6> ncr(int n, int r)
     return n2nr * invFactR;
 }
 
+// 뤼카의 정리
+template<int m, typename T6>
+modint<m, T6> ncrLucas(long long int n, long long int r)
+{
+    assert(r < m);
 
+    if (n - r < r) {
+        r = n - r;
+    }
+
+	modint<m, T6> ret = 1;
+	while (n > 0 || r > 0) {
+		long long int nn = n % m;
+		long long int rr = r % m;
+
+		if (nn < rr) {
+			return modint<m, T6>(0);
+		}
+
+		ret *= ncr<m, T6>(nn, rr);
+
+		n /= m;
+		r /= m;
+	}
+
+	return ret;
+}
 
 // z[i] = str[i]에서 시작하는 부분 문자열이면서 str의 prefix이기도 한 가장 긴 문자열의 길이
 void zAlgorithm(const string &str, vector<int> &z)
