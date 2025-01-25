@@ -1685,6 +1685,11 @@ public:
 		parent[b] = a;
 		size[a] += size[b];
 	}
+
+	int getSize(int x) {
+		assert(x <= static_cast<int>(parent.size()));
+		return size[find(x)];
+	}
 };
 
 void Eratos(int n, vector<unsigned char> &isPrime)
