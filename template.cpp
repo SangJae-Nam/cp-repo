@@ -197,8 +197,6 @@ void getConvexHull(vector<pii> &points, vector<pii> &output)
 	output.pop_back();
 }
 
-
-
 class BipartiteMatch {
 	public:
 		BipartiteMatch(int lSize, int rSize) : leftSize(lSize), rightSize(rSize) {
@@ -214,15 +212,22 @@ class BipartiteMatch {
 		int bipartiteMatch() {
 			int size = 0;
 			for (int left = 0; left < leftSize; left++) {
-				for (int k = 0; k < 2; k++) {
-					visited = vector<bool>(leftSize, false);
-					if (dfs(left)) {
-						size++;
-					}
+				visited = vector<bool>(leftSize, false);
+				if (dfs(left)) {
+					size++;
 				}
 			}
 
 			return size;
+		}
+
+		void print() {
+			for (int l = 0; l < leftSize; l++) {
+				for (int r = 0; r < rightSize; r++) {
+					cout << (adj[l][r] ? '1' : '0') << ' ';
+				}
+				cout << '\n';
+			}
 		}
 
 	private:
