@@ -21,6 +21,34 @@
 using namespace std;
 using pii = pair<int, int>;
 
+// Palindrome, 펠린드롬 구하기
+// ans[i]는 i번째를 를 중심으로 한 펠린드롬 반지름 길이가 저장됨
+void manacherAlgorithm(const vector<int> &str, vector<int> &ans)
+{
+	ans.resize(str.size());
+	int r = -1;
+	int p = -1;
+	int n = static_cast<int>(str.size());
+	for (int i = 0; i < n; i++) {
+		if (i <= r) {
+			ans[i] = min(ans[2*p - i], r - i);
+		}
+		else {
+			ans[i] = 0;
+		}
+
+		while (i - ans[i] - 1 >= 0 && i + ans[i] + 1 < n &&
+				str[i - ans[i] - 1] == str[i + ans[i] + 1]) {
+			ans[i]++;
+		}
+
+		if (i + ans[i] > r) {
+			r = i + ans[i];
+			p = i;
+		}
+	}
+}
+
 class TopologicalSort2 {  // Queue를 이용한 위상정렬
 private:
 	vector<vector<int>> &adj;
