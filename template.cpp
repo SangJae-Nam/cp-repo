@@ -23,12 +23,13 @@ using pii = pair<int, int>;
 
 // Palindrome, 펠린드롬 구하기
 // ans[i]는 i번째를 를 중심으로 한 펠린드롬 반지름 길이가 저장됨
-void manacherAlgorithm(const vector<int> &str, vector<int> &ans)
+template <typename T>
+void manacherAlgorithm(const vector<T> &arr, vector<int> &ans)
 {
-	ans.resize(str.size());
+	ans.resize(arr.size());
 	int r = -1;
 	int p = -1;
-	int n = static_cast<int>(str.size());
+	int n = static_cast<int>(arr.size());
 	for (int i = 0; i < n; i++) {
 		if (i <= r) {
 			ans[i] = min(ans[2*p - i], r - i);
@@ -38,7 +39,7 @@ void manacherAlgorithm(const vector<int> &str, vector<int> &ans)
 		}
 
 		while (i - ans[i] - 1 >= 0 && i + ans[i] + 1 < n &&
-				str[i - ans[i] - 1] == str[i + ans[i] + 1]) {
+				arr[i - ans[i] - 1] == arr[i + ans[i] + 1]) {
 			ans[i]++;
 		}
 
