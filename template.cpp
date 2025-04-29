@@ -21,6 +21,48 @@
 using namespace std;
 using pii = pair<int, int>;
 
+class PrefixSum2D {
+private:
+	int row;
+	int col;
+	vector<vector<long long int>> arr;
+
+public:
+	PrefixSum2D() {}
+
+	//좌표는 1부터 시작
+	void init(vector<vector<int>> &input) {
+		row = static_cast<int>(input.size());
+		col = static_cast<int>(input[0].size());
+
+		arr.resize(row);
+		for (int r = 0; r < row; r++) {
+			arr[r].resize(col);
+			for (int c = 1; c < col; c++) {
+				arr[r][c] += arr[r][c - 1] + input[r][c];
+			}
+		}
+
+		for (int c = 0; c < col; c++) {
+			for (int r = 1; r < row; r++) {
+				arr[r][c] += arr[r - 1][c];
+			}
+		}
+	}
+
+	long long int sum(int x1, int y1, int x2, int y2) {
+		assert(x1 <= x2 && y1 <= y2);
+
+		long long int ret = arr[y2][x2];
+		ret -= arr[y2][x1 - 1];
+		ret -= arr[y1 - 1][x2];
+		ret += arr[y1 - 1][x1 - 1];
+
+		return ret;
+	}
+};
+
+
 // Palindrome, 펠린드롬 구하기
 // ans[i]는 i번째를 를 중심으로 한 펠린드롬 반지름 길이가 저장됨
 template <typename T>
