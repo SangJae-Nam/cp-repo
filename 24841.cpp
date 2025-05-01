@@ -22,44 +22,7 @@ class Solve {
 private:
 	int N;
 	string S;
-	map<string, int> palindrome;
-
-	bool dfs(int idx) {
-		if (idx >= N) {
-			return true;
-		}
-
-		if (S[idx] == '?') {
-			S[idx] = '0';
-			if (dfs(idx)) {
-				return true;
-			}
-			S[idx] = '1';
-			if (dfs(idx)) {
-				return true;
-			}
-            S[idx] = '?';
-			return false;
-		}
-
-		if (idx < 4) {
-			return dfs(idx + 1);
-		}
-
-		string s5 = S.substr(idx - 4, 5);
-		if (palindrome[s5]) {
-			return false;
-		}
-		
-		if (idx > 4) {
-			string s6 = S.substr(idx - 5, 6);
-			if (palindrome[s6]) {
-				return false;
-			}
-		}
-
-		return dfs(idx + 1);
-	}
+	unordered_map<string, bool> palindrome;
 
 public:
 	Solve () {
@@ -68,10 +31,10 @@ public:
 			string s = b.to_string();
 			string t(s.rbegin(), s.rend());
 			if (s == t) {
-				palindrome[s] = 1;
+				palindrome[s] = true;
 			}
 			else {
-				palindrome[s] = 0;
+				palindrome[s] = false;
 			}
 		}
 		for (int i = 0; i < 64; i++) {
@@ -79,10 +42,10 @@ public:
 			string s = b.to_string();
 			string t(s.rbegin(), s.rend());
 			if (s == t) {
-				palindrome[s] = 1;
+				palindrome[s] = true;
 			}
 			else {
-				palindrome[s] = 0;
+				palindrome[s] = false;
 			}
 		}
 	}
@@ -95,7 +58,59 @@ public:
 		if (N <= 4) {
 			return true;
 		}
-		return dfs(0);
+
+		queue<string> q[2];
+		q[0].push(string());
+
+		for (int i = 0; i < N; i++) {
+			queue<string> &curq = q[i%2];
+			queue<string> &nextq = q[(i+1) % 2];
+			if (curq.empty()) {
+				return false;
+			}
+
+			while (!curq.empty()) {
+				string pre = curq.front();
+				curq.pop();
+
+				if (pre.size() < 4) {
+					if (S[i] == '0' || S[i] == '?') {
+						nextq.push(pre + "0");
+					}
+					if (S[i] == '1' || S[i] == '?') {
+						nextq.push(pre + "1");
+					}
+				}
+				else {
+					if (pre.size() == 4) {
+						if (S[i] == '0' || S[i] == '?') {
+							if (!palindrome[pre + "0"]) {
+								nextq.push(pre + "0");
+							}
+						}
+						if (S[i] == '1' || S[i] == '?') {
+							if (!palindrome[pre + "1"]) {
+								nextq.push(pre + "1");
+							}
+						}
+					}
+					else {
+						if (S[i] == '0' || S[i] == '?') {
+							if (!palindrome[pre.substr(1) + "0"] && !palindrome[pre + "0"]) {
+								nextq.push(pre.substr(1) + "0");
+							}
+						}
+						if (S[i] == '1' || S[i] == '?') {
+							if (!palindrome[pre.substr(1) + "1"] && !palindrome[pre + "1"]) {
+								nextq.push(pre.substr(1) + "1");
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return !q[N % 2].empty();
 	}
 };
 
