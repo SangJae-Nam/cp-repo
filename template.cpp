@@ -481,6 +481,10 @@ public:
 		mVal = static_cast<unsigned int>(v % umod());
 	}
 
+	modint (long long int v = 0) {
+		mVal = static_cast<unsigned int>(v % umod());
+	}
+
 	unsigned int val() const {
 		return mVal;
 	}

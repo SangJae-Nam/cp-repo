@@ -40,6 +40,10 @@ public:
 		mVal = static_cast<unsigned int>(v % umod());
 	}
 
+	modint (long long int v = 0) {
+		mVal = static_cast<unsigned int>(v % umod());
+	}
+
 	unsigned int val() const {
 		return mVal;
 	}
@@ -209,7 +213,7 @@ public:
 		while (seq != K) {
 			assert(seq < K);
 			if (q.empty()) {
-				ret += ((K - seq) * s) % 1000000007;
+				ret += (K - seq) * s;
 				break;
 			}
 
@@ -221,7 +225,7 @@ public:
 			ret += len * s;
 			seq += len;
 			if (seq > K) {
-				ret -= ((seq - K) * s) % 1000000007;
+				ret -= (seq - K) * s;
 				break;
 			}
 			s--;
