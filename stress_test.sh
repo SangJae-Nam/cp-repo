@@ -11,7 +11,7 @@ fi
 OPTIMIZED_FILE=$1
 BRUTE_FORCE_FILE=$2
 TC_GEN_FILE=generate_tc.cpp
-LIMIT=50
+LIMIT=5000
  
 # Compile the C++ files with g++ (version c++17)
 set -x
@@ -23,6 +23,7 @@ set +x
 # Run the loop for at most 'limit' number of times
 for ((i=1; i<=LIMIT; i++))
 do
+  echo $i
   # Generate input using 'gen' binary
   ./gen > input.txt
  
