@@ -577,6 +577,14 @@ public:
 		return mVal != rhs.mVal;
 	}
 
+	bool operator<(const modint& rhs) const {
+		return mVal < rhs.mVal;
+	}
+
+	bool operator>(const modint& rhs) const {
+		return mVal > rhs.mVal;
+	}
+
 	friend istream& operator>>(istream &in, modint &rhs) {
 		in >> rhs.mVal;
 		return in;
@@ -623,12 +631,11 @@ void getFermatCompute(vector<modint<m, T6>> &facts, vector<modint<m, T6>> &invfa
 template<int m, typename T6>
 class binomialCoeffMod
 {
-private:
+public:
+	int size;
 	vector<modint<m, T6>> facts;
 	vector<modint<m, T6>> invfacts;
-	int size;
 
-public:
 	binomialCoeffMod(int _size) : size(_size) {
 		getFermatCompute(facts, invfacts, size);
 	}
