@@ -21,6 +21,38 @@
 using namespace std;
 using pii = pair<int, int>;
 
+class LIS {
+private:
+public:
+	vector<int> lengths;
+
+	void make(const vector<int> &input, bool makeLengthArr = false) {
+		int size = static_cast<int>(input.size());
+
+		if (makeLengthArr) {
+			lengths.resize(size);
+		}
+
+		vector<int> lis;
+		lis.reserve(size);
+		for (int i = 0; i < size; i++) {
+			auto it = lower_bound(lis.begin(), lis.end(), input[i]);
+			if (it == lis.end()) {
+				lis.push_back(input[i]);
+				if (makeLengthArr) {
+					lengths[i] = static_cast<int>(lis.size());
+				}
+			}
+			else {
+				*it = input[i];
+				if (makeLengthArr) {
+					lengths[i] = static_cast<int>(it - lis.begin()) + 1;
+				}
+			}
+		}
+	}
+};
+
 class PrefixSum2D {
 private:
 	int row;
