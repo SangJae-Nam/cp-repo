@@ -25,8 +25,10 @@ class LIS {
 private:
 public:
 	vector<int> lengths;
+	vector<int> maxSeq;
+	int maxLength;
 
-	void make(const vector<int> &input, bool makeLengthArr = false) {
+	void make(const vector<int> &input, bool makeLengthArr = false, bool track = false) {
 		int size = static_cast<int>(input.size());
 
 		if (makeLengthArr) {
@@ -35,18 +37,41 @@ public:
 
 		vector<int> lis;
 		lis.reserve(size);
+		maxLength = 0;
+
+		vector<int> lisIndex;
+		if (track) {
+			lisIndex.resize(size);
+		}
+
 		for (int i = 0; i < size; i++) {
+			int len;
 			auto it = lower_bound(lis.begin(), lis.end(), input[i]);
 			if (it == lis.end()) {
 				lis.push_back(input[i]);
-				if (makeLengthArr) {
-					lengths[i] = static_cast<int>(lis.size());
-				}
+				len = static_cast<int>(lis.size());
 			}
 			else {
 				*it = input[i];
-				if (makeLengthArr) {
-					lengths[i] = static_cast<int>(it - lis.begin()) + 1;
+				len = static_cast<int>(it - lis.begin()) + 1;
+			}
+
+			maxLength = max(maxLength, len);
+			if (makeLengthArr) {
+				lengths[i] = len;
+			}
+			if (track) {
+				lisIndex[i] = len - 1;
+			}
+		}
+
+		if (track) {
+			maxSeq.resize(maxLength);
+			int retIdx = maxLength - 1;
+			for (int i = size - 1; i >= 0; i--) {
+				if (lisIndex[i] == retIdx) {
+					maxSeq[retIdx] = input[i];
+					retIdx--;
 				}
 			}
 		}
