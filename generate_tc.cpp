@@ -79,6 +79,23 @@ void printRandomNumbers(int nNumbers, int min, int max, char delim = ' ')
 	cout << '\n';
 }
 
+void genRandomSeq(int N, vector<int> &arr, int start = 1)
+{
+	arr.resize(N);
+	uniform_int_distribution<int> dis(0, N - 1);
+	vector<bool> used(N);
+
+	for (int i = 0; i < N; i++) {
+		int a = dis(gen);
+		while (used[a]) {
+			a = dis(gen);
+		}
+
+		used[a] = true;
+		arr[i] = a + start;
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	ios_base::sync_with_stdio(false);
@@ -86,17 +103,25 @@ int main(int argc, char *argv[])
 	cout.tie(nullptr);
 
 	int nTestcases = 1;
-	//cout << nTestcases << endl;
+	cout << nTestcases << endl;
 	while (nTestcases--) {
-		uniform_int_distribution<int> dis(2, 20);
-		int N = dis(gen);
-		uniform_int_distribution<int> dis2(1, N - 1);
-		int M = dis2(gen);
-		uniform_int_distribution<int> dis3(1, N);
-		int P = dis3(gen);
-
-		cout << N << ' ' << M << ' ' << P << endl;
-		printTree(N, 1, P);
+		uniform_int_distribution<int> dis1(2, 10);
+		int N = dis1(gen);
+		uniform_int_distribution<int> dis2(0, N * (N - 1) / 2);
+		int K = dis1(gen);
+		cout << N << ' ' << K << endl;
+		for (int i = 0; i < N; i++) {
+			uniform_int_distribution<int> disp(0, 100000);
+			int v = disp(gen);
+			cout << v << ' ';
+		}
+		cout << endl;
+		for (int i = 0; i < N; i++) {
+			uniform_int_distribution<int> disp(0, 100000);
+			int v = disp(gen);
+			cout << v << ' ';
+		}
+		cout << endl;
 	}
 
 	return 0;
