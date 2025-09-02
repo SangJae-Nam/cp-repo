@@ -21,6 +21,35 @@
 using namespace std;
 using pii = pair<int, int>;
 
+void dijkstra(int start, vector<vector<pair<int, int>>> &adj, vector<pair<int, int>> &dist, int maxSize = 100000000) {
+	dist.resize(adj.size(), make_pair(maxSize, -1));  // dist, prev
+	priority_queue<pair<int, int>> pq;  // -dist, node
+
+	pq.push(make_pair(0, start));
+	dist[start] = make_pair(0, start);
+
+	while (!pq.empty()) {
+		int curNode = pq.top().second;
+		int curDist = -pq.top().first;
+		pq.pop();
+
+		if (dist[curNode].first < curDist) {
+			continue;
+		}
+
+		for (auto &n : adj[curNode]) {
+			int nextNode = n.first;
+			int nextDist = curDist + n.second;
+
+			if (nextDist < dist[nextNode].first) {
+				dist[nextNode] = make_pair(nextDist, curNode);
+				pq.push(make_pair(-nextDist, nextNode));
+			}
+		}
+	}
+}
+
+
 class LIS {
 private:
 public:
