@@ -421,10 +421,13 @@ class MaxFlowMatrix {
 		MaxFlowMatrix(int s) : size(s) {
 			capacity = vector<vector<int>>(s, vector<int>(s));
 			flow = vector<vector<int>>(s, vector<int>(s));
+			adj = vector<vector<int>>(s);
 		}
 
 		void addEdge(int s, int e, int c) {
 			capacity[s][e] = c;
+			adj[s].push_back(e);
+			adj[e].push_back(s);
 		}
 
 		int calculateFlow(int source, int sink) {
@@ -445,6 +448,7 @@ class MaxFlowMatrix {
 		int size;
 		vector<vector<int>> capacity;
 		vector<vector<int>> flow;
+		vector<vector<int>> adj;
 
 		int bfs(const int source, const int sink) {
 			vector<int> parent(size, -1);
@@ -456,7 +460,7 @@ class MaxFlowMatrix {
 				int here = q.front();
 				q.pop();
 
-				for (int there = 0; there < size; there++) {
+				for (int there : adj[here]) {
 					if (capacity[here][there] - flow[here][there] > 0 && parent[there] == -1) {
 						q.push(there);
 						parent[there] = here;
