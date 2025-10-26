@@ -2063,9 +2063,13 @@ int main(int argc, char *argv[])
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 
+	Solve s;
+
 	int nTestcases;
 	cin >> nTestcases;
 	while (nTestcases--) {
+		s.input();
+		s.solve();
 	}
 
 	return 0;
