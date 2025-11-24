@@ -3,14 +3,12 @@
 #include <utility>
 #include <vector>
 #include <string>
-#include <cassert>
-#include <cstring>
 
 using namespace std;
 
-int run(const int K, int count, int startidx, int selected, int *used, const vector<int> &words)
+int run(const int K, int idx, int selected, const vector<int> &words)
 {
-	if (count == K) {
+	if (__builtin_popcount(selected) == K) {
 		int ret = 0;
 		for (const int &w : words) {
 			if ((selected & w) == w) {
@@ -20,15 +18,14 @@ int run(const int K, int count, int startidx, int selected, int *used, const vec
 		return ret;
 	}
 
-	int ret = 0;
-	for (int i = startidx; i < 26; i++) {
-		if (used[i] == 0) {
-			continue;
-		}
+	if (idx >= 26) {
+		return 0;
+	}
 
-		if (((1<<i) & selected) == 0) {
-			ret = max(ret, run(K, count + 1, i + 1, selected | (1<<i), used, words));
-		}
+	int ret = 0;
+	if (idx < 26) {
+		ret = max(ret, run(K, idx + 1, selected | (1<<idx), words));
+		ret = max(ret, run(K, idx + 1, selected, words));
 	}
 	return ret;
 }
@@ -39,9 +36,6 @@ int main(int argc, char *argv[])
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 
-	int used[26];
-	memset(used, 0, sizeof(used));
-
 	int N, K;
 	cin >> N >> K;
 
@@ -51,7 +45,6 @@ int main(int argc, char *argv[])
 		cin >> s;
 		for (char c : s) {
 			words[i] |= (1 << (c - 'a'));
-			used[c - 'a'] = 1;
 		}
 	}
 
@@ -60,7 +53,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	cout << run(K, 0, 0, 0, used, words) << '\n';
+	cout << run(K, 0, 0, words) << '\n';
 
 	return 0;
 }
