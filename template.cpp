@@ -9,6 +9,7 @@
 #include <sstream>
 #include <numeric>
 #include <cassert>
+#include <cstring>
 #include <bitset>
 #include <queue>
 #include <limits>
