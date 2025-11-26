@@ -2,63 +2,86 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <string>
-#include <tuple>
-#include <sstream>
-#include <numeric>
-#include <cassert>
-#include <bitset>
-#include <queue>
-#include <limits>
-#include <cmath>
 #include <cstring>
 
 using namespace std;
 
-using Node = pair<int, vector<int>>;
-vector<Node> nodes;
-long long int dp[100000 + 1][2];
+class Solve {
+private:
+	int N;
+	int root;
+	vector<int> V;
+	vector<vector<int>> adj;
+	long long int dp[100001][2];
 
-long long int solve(int idx, int selected)
-{
-	long long int &ret = dp[idx][selected];
-	if (ret != -1) {
+	long long int run(int cur, int enable) {
+		long long int &ret = dp[cur][enable];
+		if (ret != -1) {
+			return ret;
+		}
+
+		ret = 0;
+		if (enable) {
+			ret = V[cur];
+			for (int next : adj[cur]) {
+				ret += run(next, 0);
+			}
+		}
+		else {
+			long long int maxEnable = -10000000000000000ll;
+			bool enabled = false;
+
+			for (int next : adj[cur]) {
+				long long r1 = run(next, 1);
+				long long r0 = run(next, 0);
+
+				if (r1 >= r0) {
+					enabled = true;
+					ret += r1;
+				}
+				else {
+					ret += r0;
+					maxEnable = max(maxEnable, r1 - r0);
+				}
+			}
+
+			if (!enabled && adj[cur].size() > 0) {
+				ret += maxEnable;
+			}
+		}
+
 		return ret;
 	}
-	ret = 0;
 
-	if (selected) {
-		ret += nodes[idx].first;
-		for (int son : nodes[idx].second) {
-			ret += solve(son, 0);
+public:
+	Solve () {}
+
+	void input() {
+		cin >> N;
+		V.resize(N + 1);
+		adj.clear();
+		adj.resize(N + 1);
+
+		for (int i = 1; i <= N; i++) {
+			cin >> V[i];
 		}
-	}
-	else {
-		bool subSelected = false;
-		long long int subRet;
-		long long int subRetNotSel;
-		long long int maxRet = numeric_limits<long long int>::min();
-		for (int son : nodes[idx].second) {
-			subRet = solve(son, 1);
-			subRetNotSel = solve(son, 0);
-
-			if (subRet >= subRetNotSel) {
-				ret += subRet;
-				subSelected = true;
+		for (int i = 1; i <= N; i++) {
+			int p;
+			cin >> p;
+			if (p == 0) {
+				root = i;
 			}
 			else {
-				ret += subRetNotSel;
-				maxRet = max(maxRet, subRet - subRetNotSel);
+				adj[p].push_back(i);
 			}
-		}
-
-		if (!subSelected && nodes[idx].second.size() > 0) {
-			ret += maxRet;
 		}
 	}
 
-	return ret;
-}
+	void solve() {
+		memset(dp, -1, sizeof(dp));
+		cout << max(run(root, 1), run(root, 0)) << '\n';
+	}
+};
 
 int main(int argc, char *argv[])
 {
@@ -66,30 +89,13 @@ int main(int argc, char *argv[])
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 
+	Solve s;
+
 	int nTestcases;
 	cin >> nTestcases;
 	while (nTestcases--) {
-		int n;
-		cin >> n;
-		nodes.resize(n + 1);
-
-		for (int i = 1; i <= n; i++) {
-			cin >> nodes[i].first;
-			nodes[i].second.clear();
-		}
-
-		int root;
-		for (int i = 1; i <= n; i++) {
-			int p;
-			cin >> p;
-			nodes[p].second.push_back(i);
-			if (p == 0) {
-				root = i;
-			}
-		}
-
-		memset(dp, -1, sizeof(dp));
-		cout << max(solve(root, 0), solve(root, 1)) << '\n';
+		s.input();
+		s.solve();
 	}
 
 	return 0;
