@@ -20,62 +20,84 @@
 
 using namespace std;
 
-class BipartiteMatch {
+class BipartiteMatch2 {
 	public:
-		BipartiteMatch(int lSize, int rSize) : leftSize(lSize), rightSize(rSize) {
-			adj.resize(lSize, vector<bool>(rSize));
-			leftMatch.resize(lSize, -1);
-			rightMatch.resize(rSize, -1);
+		BipartiteMatch2(int lSize, int rSize) : leftSize(lSize), rightSize(rSize) {
+			adj.resize(lSize);
 		}
 
 		void addEdge(int left, int right) {
-			adj[left][right] = true;
+			adj[left].push_back(right);
 		}
 
 		int bipartiteMatch() {
+			leftMatch = vector<int>(leftSize, -1);
+			rightMatch = vector<int>(rightSize, -1);
+			dist = vector<int>(leftSize, 0);
+
 			int size = 0;
-			for (int left = 0; left < leftSize; left++) {
-				visited = vector<bool>(leftSize, false);
-				if (dfs(left)) {
-					size++;
+			while (bfs()) {
+				for (int left = 0; left < leftSize; left++) {
+					if (leftMatch[left] == -1 && dfs(left)) {
+						size++;
+					}
 				}
 			}
-
 			return size;
-		}
-
-		void print() {
-			for (int l = 0; l < leftSize; l++) {
-				for (int r = 0; r < rightSize; r++) {
-					cout << (adj[l][r] ? '1' : '0') << ' ';
-				}
-				cout << '\n';
-			}
 		}
 
 	private:
 		int leftSize;
 		int rightSize;
-		vector<vector<bool>> adj;
+		vector<vector<int>> adj;
 		vector<int> leftMatch;
 		vector<int> rightMatch;
-		vector<bool> visited;
+		vector<int> dist;
 
-		bool dfs(int left) {
-			if (visited[left]) {
-				return false;
+		const int INF = 1e9;
+
+		bool bfs() {
+			queue<int> q;
+
+			for (int left = 0; left < leftSize; left++) {
+				if (leftMatch[left] == -1) {
+					dist[left] = 0;
+					q.push(left);
+				}
+				else {
+					dist[left] = INF;
+				}
 			}
-			visited[left] = true;
 
-			for (int right = 0; right < rightSize; right++) {
-				if (adj[left][right]) {
-					if (rightMatch[right] == -1 || dfs(rightMatch[right])) {
-						leftMatch[left] = right;
-						rightMatch[right] = left;
-						return true;
+			bool ret = false;
+			while (!q.empty()) {
+				int left = q.front();
+				q.pop();
+
+				for (int right : adj[left]) {
+					int pairLeft = rightMatch[right];
+					if (pairLeft != -1 && dist[pairLeft] == INF) {
+						dist[pairLeft] = dist[left] + 1;
+						q.push(pairLeft);
+					}
+					if (pairLeft == -1) {
+						ret = true;
 					}
 				}
 			}
+			return ret;
+		}
+
+		bool dfs(int left) {
+			for (int right : adj[left]) {
+				int pairLeft = rightMatch[right];
+				if (pairLeft == -1 || (dist[pairLeft] == dist[left] + 1 && dfs(pairLeft))) {
+					leftMatch[left] = right;
+					rightMatch[right] = left;
+					return true;
+				}
+			}
+			dist[left] = INF;
 			return false;
 		}
 };
@@ -97,7 +119,7 @@ int main(int argc, char *argv[])
 		sharks[i] = make_tuple(a, b, c);
 	}
 
-	BipartiteMatch bm(N * 2, N);
+	BipartiteMatch2 bm(N * 2, N);
 	for (int i = 0; i < N; i++) {
 		int a, b, c;
 		tie(a, b, c) = sharks[i];
