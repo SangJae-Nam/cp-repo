@@ -17,6 +17,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#ifdef __INPUT_AS_FILE_
+#include <cstdio>
+#endif
+
+
 using namespace std;
 
 class Solve {
@@ -33,9 +38,16 @@ public:
 
 int main(int argc, char *argv[])
 {
+#ifndef __INPUT_AS_FILE_
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
 	cout.tie(nullptr);
+#else
+	if (freopen("input_large.txt", "r", stdin) == NULL) {
+		perror("freopen");
+		exit(1);
+	}
+#endif
 
 	Solve s;
 
